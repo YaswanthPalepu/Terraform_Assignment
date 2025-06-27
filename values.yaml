@@ -1,0 +1,27 @@
+controller:
+  admin:
+    user: admin
+    password: admin123
+
+  service:
+    type: NodePort
+    nodePort: 31080
+    port: 8080
+
+  persistence:
+    enabled: true
+    storageClass: "standard"   # Use "gp2" on AWS, or check `kubectl get sc`
+    size: 8Gi
+
+  installPlugins:
+    - configuration-as-code
+    - workflow-aggregator
+    - git
+    - github
+    - blueocean
+    - job-dsl
+    - credentials-binding
+    - pipeline-github-lib
+
+rbac:
+  create: true

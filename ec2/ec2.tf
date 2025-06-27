@@ -1,7 +1,7 @@
-# Security Group for Public Instance (NGINX + SSH)
 resource "aws_security_group" "public_sg" {
-  name   = "public_sg"
-  vpc_id = module.networking.aws_vpc.custom_vpc.id
+  name        = "public_sg"
+  description = "Allow SSH and HTTP"
+  vpc_id      = var.vpc_id
 
   ingress {
     from_port   = 22
@@ -25,33 +25,33 @@ resource "aws_security_group" "public_sg" {
   }
 }
 
-# Public EC2 with NGINX
 resource "aws_instance" "public_vm" {
-  ami                         = var.ami_id
-  instance_type               = "t2.micro"
-  subnet_id                   = module.networking.aws_subnet.public_subnet.id
-  associate_public_ip_address = true
-  key_name                    = module.ssh.aws_key_pair.generated.key_name
-  vpc_security_group_ids      = [aws_security_group.public_sg.id]
+  ami           = "ami-0c55b159cbfafe1f0" # Amazon Linux 2 in us-east-1
+  instance_type = "t2.micro"
+  subnet_id     = var.public_subnet
+  key_name      = var.key_name
+  vpc_security_group_ids = [aws_security_group.public_sg.id]
 
   user_data = <<-EOF
               #!/bin/bash
-              apt update -y
-              apt install nginx -y
+              yum install -y nginx
               systemctl start nginx
               systemctl enable nginx
               EOF
 
-  tags = { Name = "public_vm" }
+  tags = {
+    Name = "Public-VM"
+  }
 }
 
-# Private EC2 (No public IP)
 resource "aws_instance" "private_vm" {
-  ami                    = var.ami_id
-  instance_type          = "t2.micro"
-  subnet_id              = module.networking.aws_subnet.private_subnet.id
-  key_name               = module.ssh.aws_key_pair.generated.key_name
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+  subnet_id     = var.private_subnet
+  key_name      = var.key_name
   vpc_security_group_ids = [aws_security_group.public_sg.id]
 
-  tags = { Name = "private_vm" }
+  tags = {
+    Name = "Private-VM"
+  }
 }

@@ -1,7 +1,11 @@
-output "public_instance_ip" {
-  value = module.ec2.aws_instance.public_vm.public_ip
+output "public_ip" {
+  value = module.ec2.public_ip
+}
+
+output "private_instance_id" {
+  value = module.ec2.private_instance_id
 }
 
 output "private_key_path" {
-  value = module.ssh.local_file.private_key.filename
+  value = module.ssh.private_key_path
 }
