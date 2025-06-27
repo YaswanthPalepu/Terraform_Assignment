@@ -7,22 +7,22 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/YaswanthPalepu/Terraform_Assignment.git'
-            }
-        }
-
-        stage('Terraform Init') {
-            steps {
-                sh 'terraform init'
-            }
-        }
-
-        stage('Terraform Apply') {
-            steps {
-                sh 'terraform apply -auto-approve'
-            }
-        }
+    stage('Init') {
+      steps {
+        sh 'terraform init'
+      }
     }
+
+    stage('Plan') {
+      steps {
+        sh 'terraform plan'
+      }
+    }
+
+    stage('Apply') {
+      steps {
+        sh 'terraform apply -auto-approve'
+      }
+    }
+  }
 }
